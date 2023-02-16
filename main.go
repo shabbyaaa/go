@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"go/router"
+)
 
-func main()  {
-	fmt.Println("hello world")
+func main() {
+	r := router.Router()
+
+	r.Run(":8080")
 }

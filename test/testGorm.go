@@ -25,6 +25,7 @@ func main() {
 
 	// Create
 	user := &models.UserBasic{}
+	fmt.Printf("user: %v\n", user)
 	user.Name = "shen"
 	db.Create(user)
 
