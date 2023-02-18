@@ -1,0 +1,13 @@
+info:
+  contact: {}
+paths:
+  /user/getUserList:
+    get:
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      tags:
+      - user
+swagger: "2.0"
