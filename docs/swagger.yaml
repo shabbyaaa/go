@@ -1,5 +1,5 @@
 definitions:
-  dao.Create:
+  dao.CreateUser:
     properties:
       name:
         example: admin
@@ -8,8 +8,10 @@ definitions:
         example: "123456"
         type: string
     type: object
-  dao.Update:
+  dao.UpdateUser:
     properties:
+      email:
+        type: string
       id:
         type: string
       name:
@@ -17,6 +19,8 @@ definitions:
         type: string
       password:
         example: "123456"
+        type: string
+      phone:
         type: string
     type: object
 info:
@@ -30,7 +34,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/dao.Create'
+          $ref: '#/definitions/dao.CreateUser'
       produces:
       - application/json
       responses:
@@ -76,7 +80,7 @@ paths:
         name: date
         required: true
         schema:
-          $ref: '#/definitions/dao.Update'
+          $ref: '#/definitions/dao.UpdateUser'
       produces:
       - application/json
       responses:

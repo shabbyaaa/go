@@ -31,7 +31,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dao.Create"
+                            "$ref": "#/definitions/dao.CreateUser"
                         }
                     }
                 ],
@@ -104,7 +104,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dao.Update"
+                            "$ref": "#/definitions/dao.UpdateUser"
                         }
                     }
                 ],
@@ -120,7 +120,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dao.Create": {
+        "dao.CreateUser": {
             "type": "object",
             "properties": {
                 "name": {
@@ -133,9 +133,12 @@ const docTemplate = `{
                 }
             }
         },
-        "dao.Update": {
+        "dao.UpdateUser": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -146,6 +149,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "123456"
+                },
+                "phone": {
+                    "type": "string"
                 }
             }
         }

@@ -20,7 +20,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dao.Create"
+                            "$ref": "#/definitions/dao.CreateUser"
                         }
                     }
                 ],
@@ -93,7 +93,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dao.Update"
+                            "$ref": "#/definitions/dao.UpdateUser"
                         }
                     }
                 ],
@@ -109,7 +109,7 @@
         }
     },
     "definitions": {
-        "dao.Create": {
+        "dao.CreateUser": {
             "type": "object",
             "properties": {
                 "name": {
@@ -122,9 +122,12 @@
                 }
             }
         },
-        "dao.Update": {
+        "dao.UpdateUser": {
             "type": "object",
             "properties": {
+                "email": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -135,6 +138,9 @@
                 "password": {
                     "type": "string",
                     "example": "123456"
+                },
+                "phone": {
+                    "type": "string"
                 }
             }
         }

@@ -6,6 +6,7 @@ import (
 	"go/models"
 	"strconv"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +36,25 @@ func CreateUser(c *gin.Context) {
 	data, _ := c.GetRawData()
 	var body map[string]string
 	_ = json.Unmarshal(data, &body)
+	if body["name"] == "" || body["password"] == "" {
+		c.JSON(200, gin.H{
+			"code":    -1,
+			"message": "用户名或密码不能为空！",
+			"data":    user,
+		})
+		return
+	}
+
+	ret := models.FindUserByName(body["name"])
+	if ret.Name != "" {
+		c.JSON(200, gin.H{
+			"code":    -1,
+			"message": "该用户已存在！",
+			"data":    user,
+		})
+		return
+	}
+
 	user.Name = body["name"]
 	user.Password = body["password"]
 	models.CreateUser(user)
@@ -76,6 +96,20 @@ func UpdateUser(c *gin.Context) {
 	user.ID = uint(id)
 	user.Name = body["name"]
 	user.Password = body["password"]
+	user.Email = body["email"]
+	user.Phone = body["phone"]
+
+	_, err := govalidator.ValidateStruct(user)
+	if err != nil {
+		fmt.Println("err", err)
+		c.JSON(200, gin.H{
+			"code": -1,
+			// TODO: 返回的err是一个对象
+			"message": err,
+			"data":    "",
+		})
+		return
+	}
 
 	fmt.Println("update :", user)
 	// TODO: 已被删除的用户修改无效

@@ -13,4 +13,6 @@ type UpdateUser struct {
 	ID       string `json:"id"`
 	Name     string `json:"name" example:"admin"`
 	Password string `json:"password" example:"123456"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
 }
