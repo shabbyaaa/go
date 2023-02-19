@@ -1,6 +1,64 @@
+definitions:
+  dao.Create:
+    properties:
+      name:
+        example: admin
+        type: string
+      password:
+        example: "123456"
+        type: string
+    type: object
+  dao.Update:
+    properties:
+      id:
+        type: string
+      name:
+        example: admin
+        type: string
+      password:
+        example: "123456"
+        type: string
+    type: object
 info:
   contact: {}
 paths:
+  /user/createUser:
+    post:
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dao.Create'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      summary: 新增用户
+      tags:
+      - user
+  /user/deleteUser:
+    get:
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      summary: 删除用户
+      tags:
+      - user
   /user/getUserList:
     get:
       responses:
@@ -8,6 +66,25 @@ paths:
           description: code", "message"}
           schema:
             type: string
+      tags:
+      - user
+  /user/updateUser:
+    post:
+      parameters:
+      - description: 参数
+        in: body
+        name: date
+        required: true
+        schema:
+          $ref: '#/definitions/dao.Update'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      summary: 修改用户
       tags:
       - user
 swagger: "2.0"
