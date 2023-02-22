@@ -12,6 +12,7 @@ import (
 func main() {
 	utils.InitConfig()
 	utils.InitMySQL()
+	utils.InitRedis()
 	r := router.Router()
 	docs.SwaggerInfo.BasePath = ""
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
