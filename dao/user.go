@@ -16,3 +16,8 @@ type UpdateUser struct {
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
 }
+
+type FindUserByNameAndPwd struct {
+	Name     string `json:"name" example:"admin"`
+	Password string `json:"password" example:"123456"`
+}
