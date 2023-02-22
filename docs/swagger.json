@@ -4,6 +4,36 @@
         "contact": {}
     },
     "paths": {
+        "/user/checkUserByNameAndPwd": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "登录检验",
+                "parameters": [
+                    {
+                        "description": "参数",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dao.FindUserByNameAndPwd"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "code\", \"message\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/createUser": {
             "post": {
                 "produces": [
@@ -110,6 +140,19 @@
     },
     "definitions": {
         "dao.CreateUser": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "admin"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "dao.FindUserByNameAndPwd": {
             "type": "object",
             "properties": {
                 "name": {

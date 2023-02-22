@@ -21,7 +21,7 @@ func Md5EncodeUpper(data string) string {
 
 // 加密
 func MakePassword(plainpwd, salt string) string {
-	return Md5EncodeUpper(plainpwd + salt)
+	return Md5EncodeLower(plainpwd + salt)
 }
 
 // 解密

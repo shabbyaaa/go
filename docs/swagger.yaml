@@ -8,6 +8,15 @@ definitions:
         example: "123456"
         type: string
     type: object
+  dao.FindUserByNameAndPwd:
+    properties:
+      name:
+        example: admin
+        type: string
+      password:
+        example: "123456"
+        type: string
+    type: object
   dao.UpdateUser:
     properties:
       email:
@@ -26,6 +35,25 @@ definitions:
 info:
   contact: {}
 paths:
+  /user/checkUserByNameAndPwd:
+    post:
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dao.FindUserByNameAndPwd'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      summary: 登录检验
+      tags:
+      - user
   /user/createUser:
     post:
       parameters:
