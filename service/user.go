@@ -6,11 +6,13 @@ import (
 	"go/models"
 	"go/utils"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 // GetUserList
@@ -167,4 +169,41 @@ func CheckUserByNameAndPwd(c *gin.Context) {
 		"message": "登录成功",
 		"data":    user_basic,
 	})
+}
+
+// 防止跨域站点伪造请求
+var upGrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func sendMsg(c *gin.Context) {
+	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer func(ws *websocket.Conn) {
+		err = ws.Close()
+		if err != nil {
+			fmt.Println(err)
+		}
+	}(ws)
+
+}
+
+func MsgHandler(c *gin.Context, ws *websocket.Conn) {
+	for {
+		msg, err := utils.Subscribe(c, utils.PublishKey)
+		if err != nil {
+			fmt.Println("MsgHandler 发送失败", err)
+		}
+		time := time.Now().Format("2022-02-23 22:56")
+		message := fmt.Sprintf("[ws][%s]:%s", time, msg)
+		err = ws.WriteMessage(1, []byte(message))
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }

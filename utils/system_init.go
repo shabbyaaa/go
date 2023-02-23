@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -54,6 +55,29 @@ func InitRedis() {
 		PoolSize:     viper.GetInt("redis.poolSize"),
 		MinIdleConns: viper.GetInt("redis.minIdleConn"),
 	})
-	fmt.Println(" Redis inited 。。。。", Red)
-	fmt.Println(" Redis inited 。。。。")
+	fmt.Println("Redis inited")
+}
+
+const (
+	PublishKey = "websocket"
+)
+
+// Publish 发布消息到Redis
+func Publish(ctx context.Context, channel string, msg string) error {
+	var err error
+	err = Red.Publish(ctx, channel, msg).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
+	return err
+}
+
+// Subscribe 订阅Redis消息
+func Subscribe(ctx context.Context, channel string) (string, error) {
+	sub := Red.Subscribe(ctx, channel)
+	msg, err := sub.ReceiveMessage(ctx)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return msg.Payload, err
 }
