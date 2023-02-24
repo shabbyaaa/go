@@ -178,7 +178,7 @@ var upGrader = websocket.Upgrader{
 	},
 }
 
-func sendMsg(c *gin.Context) {
+func SendMsg(c *gin.Context) {
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -190,17 +190,19 @@ func sendMsg(c *gin.Context) {
 			fmt.Println(err)
 		}
 	}(ws)
-
+	MsgHandler(c, ws)
 }
 
 func MsgHandler(c *gin.Context, ws *websocket.Conn) {
 	for {
 		msg, err := utils.Subscribe(c, utils.PublishKey)
+		fmt.Println("msg", msg)
 		if err != nil {
 			fmt.Println("MsgHandler 发送失败", err)
 		}
 		time := time.Now().Format("2022-02-23 22:56")
 		message := fmt.Sprintf("[ws][%s]:%s", time, msg)
+		fmt.Println("message", message)
 		err = ws.WriteMessage(1, []byte(message))
 		if err != nil {
 			fmt.Println(err)
