@@ -179,6 +179,7 @@ var upGrader = websocket.Upgrader{
 }
 
 func SendMsg(c *gin.Context) {
+	fmt.Println("sendMsg")
 	ws, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -194,6 +195,7 @@ func SendMsg(c *gin.Context) {
 }
 
 func MsgHandler(c *gin.Context, ws *websocket.Conn) {
+	fmt.Println("MsgHandler")
 	for {
 		msg, err := utils.Subscribe(c, utils.PublishKey)
 		fmt.Println("msg", msg)
