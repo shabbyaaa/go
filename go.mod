@@ -61,6 +61,7 @@ require (
 	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
+	gopkg.in/fatih/set.v0 v0.2.1
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
