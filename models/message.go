@@ -177,5 +177,11 @@ func sendMsg(userId int64, msg []byte) {
 }
 
 func sendGroupMsg(targetId int64, msg []byte) {
+	fmt.Println("开始群发消息")
 	userIds := SearchUserByGroupId(uint(targetId))
+	for i := 0; i < len(userIds); i++ {
+		if targetId != int64(userIds[i]) {
+			sendMsg(int64(userIds[i]), msg)
+		}
+	}
 }
