@@ -14,7 +14,7 @@ import (
 // }
 
 func main() {
-	db, err := gorm.Open(mysql.Open("root:root@tcp(localhost:3306)/ginchat?charset=utf8&parseTime=True&loc=Local"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:j8YbhxxAMb2yh7hf@tcp(150.158.49.116:3306)/ginchat?charset=utf8&parseTime=True&loc=Local"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
