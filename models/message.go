@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go/utils"
+	"net"
 	"net/http"
 	"strconv"
 	"sync"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/websocket"
+	"github.com/spf13/viper"
 	"gopkg.in/fatih/set.v0"
 	"gorm.io/gorm"
 )
@@ -80,7 +82,11 @@ func Chat(writer http.ResponseWriter, request *http.Request) {
 	rwLocker.Lock()
 	clientMap[userId] = node
 	rwLocker.Unlock()
-
+	// 发动逻辑
+	go sendProc(node)
+	// 接受逻辑
+	go recvProc(node)
+	sendMsg(userId, []byte("欢迎进入聊天系统"))
 }
 
 func sendProc(node *Node) {
@@ -97,25 +103,86 @@ func sendProc(node *Node) {
 	}
 }
 
-func receProc(node *Node) {
+func recvProc(node *Node) {
 	for {
 		_, data, err := node.Conn.ReadMessage()
+		fmt.Println("[ws] recvProc1 <<<<< ", string(data))
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		msg := Message{}
-		err = json.Unmarshal(data, &msg)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		if msg.Type == 3 {
-			currentTime := uint64(time.Now().Unix())
-			node.Heartbeat(currentTime)
-		} else {
+		broadMsg(data)
+		fmt.Println("[ws] <<<< ", data)
+		// msg := Message{}
+		// err = json.Unmarshal(data, &msg)
+		// if err != nil {
+		// 	fmt.Println(err, "1")
+		// 	return
+		// }
+		// if msg.Type == 3 {
+		// 	currentTime := uint64(time.Now().Unix())
+		// 	node.Heartbeat(currentTime)
+		// } else {
+		// 	dispatch(data)
+		// 	broadMsg(data)
+		// 	fmt.Println("[ws] recvProc <<<<< ", string(data))
+		// }
+	}
+}
 
+// 广播
+var udpsendChan chan []byte = make(chan []byte, 1024)
+
+func broadMsg(data []byte) {
+	udpsendChan <- data
+}
+
+func init() {
+	go udpSendProc()
+	go udpRecvProc()
+}
+
+// udp数据发送携程
+func udpSendProc() {
+	con, err := net.DialUDP("udp", nil, &net.UDPAddr{
+		IP:   net.IPv4(150, 158, 49, 116),
+		Port: viper.GetInt("port.udp"),
+	})
+	defer con.Close()
+	if err != nil {
+		fmt.Println(err)
+	}
+	for {
+		select {
+		case data := <-udpsendChan:
+			_, err := con.Write(data)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
 		}
+	}
+}
+
+// udp数据接受携程
+func udpRecvProc() {
+	con, err := net.ListenUDP("udp", &net.UDPAddr{
+		IP:   net.IPv4zero,
+		Port: viper.GetInt("port.udp"),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer con.Close()
+	for {
+		var buf [512]byte
+		n, err := con.Read(buf[0:])
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("udpRecvProc  data :", string(buf[0:n]))
+		dispatch(buf[0:n])
 	}
 }
 
@@ -184,4 +251,9 @@ func sendGroupMsg(targetId int64, msg []byte) {
 			sendMsg(int64(userIds[i]), msg)
 		}
 	}
+}
+
+func (node *Node) Heartbeat(currentTime uint64) {
+	node.HeartbeatTime = currentTime
+	return
 }
