@@ -1,17 +1,14 @@
 package models
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"go/utils"
 	"net"
 	"net/http"
 	"strconv"
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/websocket"
 	"github.com/spf13/viper"
 	"gopkg.in/fatih/set.v0"
@@ -103,10 +100,11 @@ func sendProc(node *Node) {
 	}
 }
 
+// 自己也会收到自己发的消息
 func recvProc(node *Node) {
 	for {
 		_, data, err := node.Conn.ReadMessage()
-		fmt.Println("[ws] recvProc1 <<<<< ", string(data))
+		fmt.Println("[ws] recvProc <<<<< ", string(data))
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -206,41 +204,45 @@ func sendMsg(userId int64, msg []byte) {
 	rwLocker.RLock()
 	node, ok := clientMap[userId]
 	rwLocker.RUnlock()
-	jsonMsg := Message{}
-	json.Unmarshal(msg, &jsonMsg)
-	ctx := context.Background()
-	targetIdStr := strconv.Itoa(int(userId))
-	userIdStr := strconv.Itoa(int(jsonMsg.UserId))
-	jsonMsg.CreateTime = uint64(time.Now().Unix())
-	r, err := utils.Red.Get(ctx, "online_"+userIdStr).Result()
-	if err != nil {
-		fmt.Println(err)
-		return
+	fmt.Println("[ws] sendMsg <<<< ", msg)
+	if ok {
+		node.DataQueue <- msg
 	}
-	if r != "" {
-		if ok {
-			fmt.Println("sendMsg >>> userID: ", userId, "  msg:", string(msg))
-			node.DataQueue <- msg
-		}
-	}
-	var key string
-	if userId > jsonMsg.UserId {
-		key = "msg_" + userIdStr + "_" + targetIdStr
-	} else {
-		key = "msg_" + targetIdStr + "_" + userIdStr
-	}
-	res, err := utils.Red.ZRevRange(ctx, key, 0, -1).Result()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	score := float64(cap(res)) + 1
-	ress, e := utils.Red.ZAdd(ctx, key, &redis.Z{score, msg}).Result()
-	if e != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(ress)
+	// jsonMsg := Message{}
+	// json.Unmarshal(msg, &jsonMsg)
+	// ctx := context.Background()
+	// targetIdStr := strconv.Itoa(int(userId))
+	// userIdStr := strconv.Itoa(int(jsonMsg.UserId))
+	// jsonMsg.CreateTime = uint64(time.Now().Unix())
+	// r, err := utils.Red.Get(ctx, "online_"+userIdStr).Result()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// if r != "" {
+	// 	if ok {
+	// 		fmt.Println("sendMsg >>> userID: ", userId, "  msg:", string(msg))
+	// 		node.DataQueue <- msg
+	// 	}
+	// }
+	// var key string
+	// if userId > jsonMsg.UserId {
+	// 	key = "msg_" + userIdStr + "_" + targetIdStr
+	// } else {
+	// 	key = "msg_" + targetIdStr + "_" + userIdStr
+	// }
+	// res, err := utils.Red.ZRevRange(ctx, key, 0, -1).Result()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// score := float64(cap(res)) + 1
+	// ress, e := utils.Red.ZAdd(ctx, key, &redis.Z{score, msg}).Result()
+	// if e != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// fmt.Println(ress)
 }
 
 func sendGroupMsg(targetId int64, msg []byte) {
