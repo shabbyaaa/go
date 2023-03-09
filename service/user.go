@@ -171,6 +171,52 @@ func CheckUserByNameAndPwd(c *gin.Context) {
 	})
 }
 
+// FindUserByNameAndPwd
+// @Summary 登录检验
+// @Tags user
+// @Produce  json
+// @Param data body dao.FindUserByNameAndPwd true "参数"
+// @Success 200 {string} json{"code", "message"}
+// @Router /user/findUserByNameAndPwd [post]
+func FindUserByNameAndPwd(c *gin.Context) {
+	user_basic := models.UserBasic{}
+	data, _ := c.GetRawData()
+	var body map[string]string
+	_ = json.Unmarshal(data, &body)
+	name := body["name"]
+	password := body["password"]
+	// name := c.Request.FormValue("name")
+	// password := c.Request.FormValue("password")
+
+	fmt.Println("name:", name, "password:", password)
+	user := models.FindUserByName(name)
+	if user.Name == "" {
+		c.JSON(200, gin.H{
+			"code":    -1,
+			"message": "该用户不存在",
+			"data":    user_basic,
+		})
+		return
+	}
+	flag := utils.ValidPassword(password, user.Salt, user.Password)
+	if !flag {
+		c.JSON(200, gin.H{
+			"code":    -1, //  0成功   -1失败
+			"message": "密码不正确",
+			"data":    user_basic,
+		})
+		return
+	}
+	pwd := utils.MakePassword(password, user.Salt)
+	user_basic = models.FindUserByNameAndPwd(name, pwd)
+
+	c.JSON(200, gin.H{
+		"code":    0, //  0成功   -1失败
+		"message": "登录成功",
+		"data":    user_basic,
+	})
+}
+
 // 防止跨域站点伪造请求
 var upGrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {

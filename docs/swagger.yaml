@@ -91,6 +91,25 @@ paths:
       summary: 删除用户
       tags:
       - user
+  /user/findUserByNameAndPwd:
+    post:
+      parameters:
+      - description: 参数
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dao.FindUserByNameAndPwd'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: code", "message"}
+          schema:
+            type: string
+      summary: 登录检验
+      tags:
+      - user
   /user/getUserList:
     get:
       responses:
