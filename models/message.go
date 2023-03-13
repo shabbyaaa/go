@@ -142,10 +142,15 @@ func init() {
 
 // udp数据发送携程
 func udpSendProc() {
+	fmt.Println(viper.GetInt("port.udp"), "viper.GetI)")
 	con, err := net.DialUDP("udp", nil, &net.UDPAddr{
 		IP:   net.IPv4(150, 158, 49, 116),
-		Port: viper.GetInt("port.udp"),
+		Port: 7777,
+		// Port: viper.GetInt("port.udp"),
 	})
+
+	fmt.Println(con, "con")
+	fmt.Println(err, "err")
 	defer con.Close()
 	if err != nil {
 		fmt.Println(err)
