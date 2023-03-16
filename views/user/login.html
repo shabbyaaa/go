@@ -58,12 +58,13 @@
                     if (res.code != 0) {
                         mui.toast(res.msg)
                     } else {
-                        var url = "/chat/index.shtml?id=" + res.data.id
-                            + "&token=" + res.data.token
-                        userInfo(res.data)
-                        userId(res.data.id)
+                        // var url = "/chat/index.shtml?id=" + res.data.id
+                        //     + "&token=" + res.data.token
+                        // userInfo(res.data)
+                        // userId(res.data.id)
+                        // console.log('url :>> ', url);
                         // localStorage.setItem('userInfo', JSON.stringify(res.data))
-                        location.href = url
+                        // location.href = url
                         //mui.alert(url)
                     }
                 })

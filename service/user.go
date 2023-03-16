@@ -180,13 +180,13 @@ func CheckUserByNameAndPwd(c *gin.Context) {
 // @Router /user/findUserByNameAndPwd [post]
 func FindUserByNameAndPwd(c *gin.Context) {
 	user_basic := models.UserBasic{}
-	data, _ := c.GetRawData()
-	var body map[string]string
-	_ = json.Unmarshal(data, &body)
-	name := body["name"]
-	password := body["password"]
-	// name := c.Request.FormValue("name")
-	// password := c.Request.FormValue("password")
+	// data, _ := c.GetRawData()
+	// var body map[string]string
+	// _ = json.Unmarshal(data, &body)
+	// name := body["name"]
+	// password := body["password"]
+	name := c.Request.FormValue("name")
+	password := c.Request.FormValue("password")
 
 	fmt.Println("name:", name, "password:", password)
 	user := models.FindUserByName(name)
